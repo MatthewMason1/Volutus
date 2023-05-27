@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-image: url('https://flipanim.com/gfx/noise.png');
+      background-color: #b9d1e0;
+      animation: fade-in 2s ease-out;
+      overflow: hidden;
+    }
+
+    @keyframes fade-in {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    #container {
+      position: relative;
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-start;
+      flex-direction: column;
+      background-color: #def1fa;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      padding: 20px;
+      z-index: 1;
+    }
+
+    #toolbar {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    #toolbar button {
+      margin-right: 5px;
+      border-radius: 5px;
+      box-shadow: 0 4px 2px rgba(31, 95, 97, 0.452);
+      background-color: #ddf6f7;
+    }
+
+    #toolbar button:focus {
+      outline: none;
+    }
+
+    #canvasContainer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      position: relative;
+    }
+
+    #canvas {
+      border: 1px solid #000;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(72, 114, 119, 0.212);
+    }
+
+    #previewCanvas {
+      border: 1px solid #000;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      margin-top: 10px;
+    }
+
+    #frameCount {
+      font-size: 12px;
+      margin-top: 5px;
+      color: #242c29;
+    }
+
+    button {
+      margin: 5px;
+      width: 40px;
+      height: 40px;
+      border: none;
+      background-color: transparent;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+      color: #6c7a75;
+    }
+
+    button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    button:active {
+      transform: scale(0.9);
+    }
+
+    .active {
+      filter: brightness(0.8);
+    }
+
+    /* Additional styles for touch devices */
+    @media (pointer: coarse) {
+      #canvas {
+        touch-action: none;
+      }
+      
+      button {
+        touch-action: manipulation;
+      }
+
+      #frameButtons {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+        <img src="https://fontmeme.com/permalink/230527/2055c260fbd48e1f955e9e6904983910.png" alt="Logo" style="width: 150px; height: auto; margin: 0 auto;">
+    <div id="toolbar">
+      <button id="drawBtn" onclick="toggleTool('draw')">
+        <img src="draw_icon.png" alt="Draw" style="width: 160%; height: 110%;" alt="Draw">
+      </button>
+      <button id="fillBtn" onclick="toggleTool('fill')">
+        <img src="fill_icon.png" alt="Fill">
+      </button>
+      <button id="eraseBtn" onclick="toggleTool('erase')">
+        <img src="erase_icon.png" alt="Erase" style="width: 130%; height: 130%;">
+      </button>
+      <button id="moveBtn" onclick="toggleTool('move')">
+        <img src="move_icon.png" alt="Move">
+      </button>
+      <button id="deleteBtn" onclick="deleteDrawing()">
+        <img src="delete_icon.png" alt="Delete">
+      </button>
+      <button id="saveBtn" onclick="saveDrawing()">
+        <img src="save_icon.png" alt="Save">
+      </button>
+      <button id="importBtn" onclick="importImage()">
+        <img src="import_icon.png" alt="Import">
+      </button>
+    </div>
+
+    <div id="canvasContainer">
+      <canvas id="canvas" width="600" height="400"></canvas>
+      <canvas id="previewCanvas" width="120" height="80"></canvas>
+      <div id="frameCount">Frames: <span id="frameCountValue">1</span></div>
+    </div>
+
+    <div id="frameButtons">
+      <button id="addFrameBtn" onclick="addFrame()">
+        <img src="add_frame_icon.png" alt="Add Frame">
+      </button>
+      <button id="duplicateFrameBtn" onclick="duplicateFrame()">
+        <img src="duplicate_frame_icon.png" alt="Duplicate Frame">
+      </button>
+      <button id="deleteFrameBtn" onclick="deleteFrame()">
+        <img src="delete_frame_icon.png" alt="Delete Frame">
+      </button>
+      <button id="playBtn" onclick="playAnimation()">
+        <img src="play_icon.png" alt="Play">
+      </button>
+      <div></div>
+    </div>
+  </div>
+
+  <script>
+    // Global variables
+    let frames = [];
+    let currentFrame = 0;
+
+    // Canvas setup
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    // JavaScript functions for button functionality
+    function toggleTool(toolName) {
+      const button = document.getElementById(toolName + 'Btn');
+      const isActive = button.classList.contains("active");
+
+      // Remove the active class from all buttons
+      const buttons = document.querySelectorAll("#toolbar button");
+      buttons.forEach((btn) => btn.classList.remove("active"));
+
+      // Toggle the active class on the selected button
+      if (!isActive) {
+        button.classList.add("active");
+      }
+    }
+
+    function deleteDrawing() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function saveDrawing() {
+      const link = document.createElement('a');
+      link.href = canvas.toDataURL();
+      link.download = 'drawing.png';
+      link.click();
+    }
+
+    function importImage() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/jpeg, image/png, image/gif';
+      input.onchange = handleImageUpload;
+      input.click();
+    }
+
+    function handleImageUpload(event) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+
+      reader.onload = function (event) {
+        const image = new Image();
+        image.onload = function () {
+          ctx.drawImage(image, 0, 0);
+        };
+        image.src = event.target.result;
+      };
+
+      reader.readAsDataURL(file);
+    }
+
+    function addFrame() {
+      const newFrame = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      newFrame.data[3] = 76; // Set the alpha value to 30% transparency
+
+      frames.splice(currentFrame + 1, 0, newFrame);
+      currentFrame++;
+
+      updateFrameCount();
+    }
+
+    function duplicateFrame() {
+      const duplicatedFrame = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      frames.splice(currentFrame + 1, 0, duplicatedFrame);
+      currentFrame++;
+
+      updateFrameCount();
+    }
+
+    function deleteFrame() {
+      if (frames.length > 1) {
+        frames.splice(currentFrame, 1);
+
+        if (currentFrame === frames.length) {
+          currentFrame--;
+        }
+
+        updateFrameCount();
+      }
+    }
+
+    function updateFrameCount() {
+      const frameCountValue = document.getElementById('frameCountValue');
+      frameCountValue.textContent = frames.length;
+    }
+
+    function playAnimation() {
+      const gif = new GIF({
+        workers: 2,
+        quality: 10,
+        width: canvas.width,
+        height: canvas.height,
+      });
+
+      frames.forEach((frame) => {
+        gif.addFrame(frame, { delay: 200 });
+      });
+
+      gif.on('finished', function (blob) {
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'animation.gif';
+        link.click();
+      });
+
+      gif.render();
+    }
+  </script>
+</body>
+</html>

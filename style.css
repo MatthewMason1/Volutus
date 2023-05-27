@@ -1,0 +1,119 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-image: url('https://flipanim.com/gfx/noise.png');
+    background-color: #8aa0ce;
+    animation: fade-in 0.5s ease-out;
+    overflow: hidden;
+  }
+  
+  @keyframes fade-in {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  
+  #container {
+    position: relative;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 20px;
+    z-index: 1;
+  }
+  
+  #toolbar {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  #toolbar button {
+    margin-right: 5px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(83, 67, 172, 0.425);
+    background-color: #96a5ce;
+  }
+  
+  #toolbar button:focus {
+    outline: none;
+  }
+  
+  #canvasContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
+  }
+  
+  #canvas {
+    border: 1px solid #000;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  #previewCanvas {
+    border: 1px solid #000;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 10px;
+  }
+  
+  #frameCount {
+    font-size: 12px;
+    margin-top: 5px;
+    color: #6c7a75;
+  }
+  
+  button {
+    margin: 5px;
+    width: 40px;
+    height: 40px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    color: #6c7a75;
+  }
+  
+  button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.918);
+  }
+  
+  button:active {
+    transform: scale(0.9);
+  }
+  
+  .active {
+    filter: brightness(0.8);
+  }
+  
+  /* Additional styles for touch devices */
+  @media (pointer: coarse) {
+    #canvas {
+      touch-action: none;
+    }
+    
+    button {
+      touch-action: manipulation;
+    }
+  
+    #frameButtons {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+  
