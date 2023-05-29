@@ -1,8 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <link rel="icon" href="https://fontmeme.com/permalink/230528/e029f85e766ce4d4fb31eaf105404c69.png">
+  <meta property="og:title" content="Volutus" />
+  <meta name="keywords" content="volutus,flipbook,animations,free,online,animation,animated,flipaclip online,matthewmason,flipanim v2">
+  <meta name="Description" content="Cloud based drawing editor">
+  <title>Volutus | Editor</title>
   <style>
-    body {
+    @font-face {
+    font-family: 'rexfontdoregular';
+    src: url('rexfontdo-regular-webfont.woff2') format('woff2'),
+         url('rexfontdo-regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+   body {
       display: flex;
       justify-content: center;
       align-items: center;
@@ -19,7 +32,7 @@
       align-items: center;
       margin-bottom: 20px;
       position: absolute;
-      top: 50px;
+      top: 30px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 1;
@@ -32,7 +45,7 @@
       align-items: center;
       flex-direction: column;
       background-color: #def1fa;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 3px 16px rgb(0, 0, 0);
       border-radius: 10px;
       padding: 20px;
       z-index: 1;
@@ -47,8 +60,8 @@
 
     #toolbar button {
       margin-right: 5px;
-      border-radius: 5px;
-      box-shadow: 0 4px 2px rgba(31, 95, 97, 0.452);
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(31, 95, 97, 0.452);
       background-color: #ddf6f7;
     }
 
@@ -65,14 +78,14 @@
     }
 
     #canvas {
-      border: 1px solid #000;
+      border: 4px solid #000;
       border-radius: 10px;
       box-shadow: 0 2px 4px rgba(72, 114, 119, 0.212);
       background-color: #fff;
     }
 
     #previewCanvas {
-      border: 1px solid #000;
+      border: 4px solid #000;
       border-radius: 10px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       margin-top: 10px;
@@ -89,13 +102,13 @@
       margin: 5px;
       width: 40px;
       height: 40px;
-      border: none;
+      border: 30px;
       background-color: transparent;
       cursor: pointer;
       display: flex;
       justify-content: center;
       align-items: center;
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition: transform 0.2s, box-shadow 2s;
       color: #6c7a75;
       position: relative;
     }
@@ -126,6 +139,98 @@
       font-size: 12px;
       z-index: 2;
     }
+    .blur {
+  filter: blur(2px);
+  pointer-events: none;
+}
+.draw-mode {
+      cursor: crosshair;
+    }
+
+    /* Additional CSS styles for draw mode */
+    .draw-mode #canvas {
+      pointer-events: auto;
+      touch-action: none;
+    }
+
+    .draw-mode #canvasContainer {
+      overflow: hidden;
+    }
+
+    #navigation {
+  display: flex;
+  justify-content: right;
+  align-items: center;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* shadow to have effect */
+  background-color: rgba(176, 211, 230, 0.7); /* Light blueish color with 70% transparency */
+  z-index: 9999;
+  transition: transform 0.2s, box-shadow 0.2s; /* added pop-out effect */
+}
+
+#navigation:hover {
+  transform: scale(1.05); /* Pop-out effect on hover */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* more shadow on hover */
+  .tooltip {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #000;
+  color: #fff;
+  padding: 3px 6px;
+  border-radius: 3px;
+  font-size: 12px;
+  z-index: 2;
+}
+
+.nav-link:hover .tooltip {
+  display: block;
+}
+
+#navigation a {
+  display: inline-block;
+  padding: 10px;
+  text-decoration: none;
+  color: #000;
+}
+
+.nav-image {
+  display: block;
+  width: 30px; /* Adjust the size of the images as needed */
+  height: 30px;
+}
+
+.nav-image:hover {
+  transform: scale(1); /* Increase image size on hover */
+  .button-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    .button-container .button {
+      margin: 0 10px;
+      display: inline-block;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .button-container .button img {
+      width: 80px;
+      height: 80px;
+      transition: all 0.3s;
+    }
+
+    .button-container .button:hover img {
+      transform: scale(1.1);
+    }
 
     button:hover .tooltip {
       display: block;
@@ -134,35 +239,40 @@
 </head>
 <body>
   <div id="logo">
-    <img src="" alt="Logo">
-  </div>
-
-  <div id="container">
+    <img src="https://fontmeme.com/permalink/230528/27809db9291e562be1552a311a405885.png" alt="rexfontdo-font" border="0" alt="Logo">
+    </div>
+<div id="container">
     <div id="toolbar">
       <div id="toolbar">
         <button id="drawBtn" onclick="toggleTool('draw')">
-          <img src="draw_icon.png" alt="Draw" style="width: 160%; height: 110%;">
-        </button>
-        <button id="fillBtn" onclick="toggleTool('fill')">
-          <img src="fill_icon.png" alt="Fill">
+          <img src="draw_icon.png" alt="Draw" style="width: 165%; height: 115%;">
         </button>
         <button id="eraseBtn" onclick="toggleTool('erase')">
-          <img src="erase_icon.png" alt="Erase" style="width: 130%; height: 130%;">
+          <img src="erase_icon.png" alt="Erase" style="width: 135%; height: 135%;">
+        </button>
+        <button id="fillBtn" onclick="toggleTool('fill')">
+          <img src="fill_icon.png" alt="Fill" style="width: 165%; height: 125%;">
         </button>
         <button id="moveBtn" onclick="toggleTool('move')">
-          <img src="move_icon.png" alt="Move">
+          <img src="move_icon.png" alt="Move" style="width: 145%; height: 95%;">
         </button>
         <button id="deleteBtn" onclick="deleteDrawing()">
-          <img src="delete_icon.png" alt="Delete">
+          <img src="delete_icon.png" alt="Delete" style="width: 176%; height: 135%;">
         </button>
         <button id="saveBtn" onclick="saveDrawing()">
-          <img src="save_icon.png" alt="Save">
+          <img src="save_icon.png" alt="Save" style="width: 135%; height: 105%;">
         </button>
         <button id="importBtn" onclick="importImage()">
-          <img src="import_icon.png" alt="Import">
+          <img src="import_icon.png" alt="Import" style="width: 145%; height: 105%;">
         </button>
         <button id="imageMoveBtn" onclick="toggleTool('imageMove')">
-          <img src="image_move_icon.png" alt="Image Move">
+          <img src="image_move_icon.png" alt="Image Move" style="width: 145%; height: 95%;">
+        </button>
+        <button id="colorPickerBtn" onclick="toggleTool('colorPicker')">
+          <img src="color_picker_icon.png" alt="Color Picker" style="width: 165%; height: 115%;">
+        </button>
+        <button id="saveBtn" onclick="toggleTool('save')">
+          <img src="OLD.png" alt="Save" style="width: 145%; height: 95%;">
         </button>
       </div>
       
@@ -170,15 +280,17 @@
 
     <div id="canvasContainer">
       <canvas id="canvas" width="600" height="400"></canvas>
-      <canvas id="previewCanvas" width="120" height="80"></canvas>
+      <canvas id="previewCanvas" width="120" height="80" style="pointer-events: none;"></canvas>
       <div id="frameCount"></div>
     </div>
-  </div>
-
-  <script>
-    // Global variables
+    
+</a>
+    </div>
+    <script>
+// Global variables
 let frames = [];
 let currentFrame = 0;
+let currentColor = '#000000'; // Initial color
 
 // Canvas setup
 const canvas = document.getElementById('canvas');
@@ -211,6 +323,9 @@ function saveDrawing() {
 }
 
 function importImage() {
+  // Add blur effect to the body
+  document.body.classList.add('blur');
+
   const input = document.createElement('input');
   input.type = 'file';
   input.accept = 'image/*';
@@ -220,7 +335,11 @@ function importImage() {
     reader.onload = function (event) {
       const img = new Image();
       img.onload = function () {
+        // Remove blur effect from the body
+        document.body.classList.remove('blur');
+        // Clear previous canvas content
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // Draw the image on the canvas
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       };
       img.src = event.target.result;
@@ -268,8 +387,8 @@ function deleteFrame() {
 }
 
 function updateFrameCount() {
-  const frameCountValue = document.getElementById('frameCountValue');
-  frameCountValue.textContent = frames.length;
+  const frameCount = document.getElementById('frameCount');
+  frameCount.textContent = frames.length;
 }
 
 function updatePreviewCanvas() {
@@ -290,9 +409,32 @@ function playAnimation() {
 
 function handleKeyPress(event) {
   if (event.key === "Enter") {
-    event.target.click();
+    event.preventDefault();
+    // ...
   }
 }
+
+// Color picker button functionality
+function openColorPicker() {
+  const colorPicker = document.createElement('input');
+  colorPicker.type = 'color';
+  colorPicker.onchange = function (e) {
+    currentColor = e.target.value;
+  };
+  colorPicker.click();
+}
+
+// Event listeners
+canvas.addEventListener('mousedown', startDrawing);
+canvas.addEventListener('mousemove', draw);
+canvas.addEventListener('mouseup', stopDrawing);
+canvas.addEventListener('mouseout', stopDrawing);
+window.addEventListener('keydown', handleKeyPress);
+
+// Update the preview canvas and frame count on initialization
+updatePreviewCanvas();
+updateFrameCount();
+
   </script>
 </body>
 </html>
